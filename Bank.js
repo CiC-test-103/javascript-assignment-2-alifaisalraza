@@ -5,8 +5,13 @@ class Bank {
         this.accounts = []; // Stores all accounts in the bank
     }
 
-    // Add methods here:
+   // Add methods here:
     // Example: createAccount(name, initialDeposit)
+    createAccount(name, initialDeposit) {
+        let newAccount = new Account(name, initialDeposit);
+        this.accounts.push(newAccount);
+        return newAccount;
+    }
 
 }
 
@@ -21,16 +26,54 @@ class Account {
     // Add methods here:
     // Example: deposit(amount) 
     // example data to be stored in transactionHistory { transactionType: 'Deposit', amount: 500 }
+    
+    deposit(amount) {
+        this.balance += amount;
+        let newTransaction = new transaction({transactionType: "Deposit", amount: amount});
+        this.transactionHistory.push(newTransaction);
+    }
 
     // Example: withdraw(amount)
     // example data to be stored in transactionHistory { transactionType: 'Withdrawal', amount: 200 }
+
+    withdraw(amount) {
+        this.balance -= amount;
+        let newTransaction = new transaction({transactionType: "Withdrawal", amount: amount});
+        this.transactionHistory.push(newTransaction);
+    }
 
     // Example: transfer(amount, recipientAccount)
     // example data to be stored in transactionHistory:
     // for account sending { transactionType: 'Transfer', amount: 300, to: recipientName }
     // for account recieving { transactionType: 'Received', amount: 300, from: senderName }
+
+    transfer(amount, recipientAccount) {
+        this.balance -= amount;
+        recipientAccount.balance += amount;
+        let newTransaction = new transaction({transactionType: "Transfer", amount: amount, to: recipientAccount.name});
+        this.transactionHistory.push(newTransaction);
+        newTransaction = new transaction({transactionType: "Received", amount: amount, from: this.name});
+        recipientAccount.transactionHistory.push(newTransaction);
+    }
     
     // Example: checkBalance()
+
+    checkBalance() {
+        return this.balance;
+    }
+}
+
+class transaction {
+    constructor(transactionData) {
+        this.transactionType = transactionData["transactionType"];
+        this.amount = transactionData["amount"];
+
+        if (this.transactionType == "Transfer"){ 
+            this.to = transactionData["to"];
+        } else if (this.transactionType == "Received") {
+                this.from = transactionData["from"];
+        }
+    }
 }
 
 //<-------------------------------DO NOT WRITE BELOW THIS LINE------------------------------>
@@ -70,5 +113,5 @@ module.exports = testBankOperations;
 
 //<-------------------------------DO NOT WRITE ABOVE THIS LINE------------------------------>
 
-
 console.log(testBankOperations());
+
